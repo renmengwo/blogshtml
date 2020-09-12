@@ -5,21 +5,52 @@
     <title>Title</title>
     <link rel="stylesheet" href="./css/public.css">
     <link rel="stylesheet" href="./css/list.css">
+    <script src="./js/jquery.min.js"></script>
 </head>
 <body>
     <section class="wrap">
         <ul class="content-box">
-            <li>
-                <h4 class="blog-title">这是我测试的博客标题</h4>
-                <p class="blog-content">这是我的博客内容，会很多超过三行展示省略号这是我的博客内容，会很多超过三行展示省略号这是我的博客内容，会很多超过三行展示省略号这是我的博客内容，会很多超过三行展示省略号这是我的博客内容，会很多超过三行展示省略号这是我的博客内容，会很多超过三行展示省略号这是我的博客内容，会很多超过三行展示省略号这是我的博客内容，会很多超过三行展示省略号</p>
-                <p class="blog-other clearfix"><span>作者：人猛我</span> <span>发布时间：2020/09/09</span></p>
-            </li>
-            <li>
-                <h4 class="blog-title">这是我测试的博客标题</h4>
-                <p class="blog-content">这是我的博客内容，会很多超过三行展示省略号这是我的博客内容，会很多超过三行展示省略号这是我的博客内容，会很多超过三行展示省略号这是我的博客内容，会很多超过三行展示省略号这是我的博客内容，会很多超过三行展示省略号这是我的博客内容，会很多超过三行展示省略号这是我的博客内容，会很多超过三行展示省略号这是我的博客内容，会很多超过三行展示省略号</p>
-                <p class="blog-other clearfix"><span>作者：人猛我</span> <span>发布时间：2020/09/09</span></p>
-            </li>
         </ul>
     </section>
 </body>
+<script>
+    function getListDom(DataArr) {
+        let str = '';
+        $.each(DataArr,(item) => {
+            const title = `<h4 class="blog-title">${DataArr[item].title}</h4>`
+            const content = `<p class="blog-content">${DataArr[item].content}</p>`
+            const other = `<p class="blog-other clearfix"><span class="blog-author">作者：${DataArr[item].author}</span> <span>发布时间：${DataArr[item].createtime}</span></p>`
+            str += `<li>${title}${content}${other}</li>`
+        })
+        $('.content-box').empty();
+        $('.content-box').append(str);
+    }
+
+    function getDataList (obj) {
+        const data = {
+            author : obj?obj.author: '',
+            keyword: obj?obj.keyword:''
+        }
+        $.ajax({
+            type:'get',
+            url:'/api/blog/list',
+            dataType:'json',
+            data:data,
+            success: (res) => {
+                if (res.status === 1) {
+                    getListDom(res.data);
+                }
+            }
+        })
+    }
+$(function () {
+    getDataList();
+    $("ul").on("click",'.blog-author',function(){
+        const author = $(this).text().split('：')[1];
+        getDataList({author:`${author}`,keyword:''})
+    })
+
+})
+
+</script>
 </html>
